@@ -6,95 +6,106 @@
     android:background="#ffffff"
     android:orientation="vertical">
 
-
-    <LinearLayout
+    <ImageView
+        android:id="@+id/touch"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="50dp"
+        android:background="#00ff00"
+        android:scaleType="center"
+        android:src="@mipmap/ic_launcher" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="260dp"
-            android:background="@mipmap/cover" />
-
-        <GridView
-            android:id="@+id/gridview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:numColumns="2" />
-
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/bottomleft"
-                android:layout_width="0dp"
-                android:layout_margin="20dp"
-                android:layout_height="60dp"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:background="@mipmap/cover" />
+
+            <GridView
+                android:id="@+id/gridview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@mipmap/panda" />
+                android:numColumns="2" />
 
 
-            <ImageView
-                android:id="@+id/bottom"
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_margin="20dp"
-                android:layout_weight="1"
-                android:background="@mipmap/ic_launcher" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="20dp">
 
-            <ImageView
-                android:id="@+id/bottomRight"
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_margin="20dp"
-                android:layout_weight="1"
-                android:background="@mipmap/panda" />
+                <ImageView
+                    android:id="@+id/bottomleft"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="20dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/panda" />
+
+
+                <ImageView
+                    android:id="@+id/bottom"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="20dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/ic_launcher" />
+
+                <ImageView
+                    android:id="@+id/bottomRight"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="20dp"
+                    android:layout_weight="1"
+                    android:background="@mipmap/panda" />
+            </LinearLayout>
+
+
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/top_left"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:background="@mipmap/back" />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/top_right"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="right|top"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:background="@mipmap/panda" />
 
-    <ImageView
-        android:id="@+id/top_left"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="30dp"
-        android:background="@mipmap/back" />
-
-    <ImageView
-        android:id="@+id/top_right"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="30dp"
-        android:background="@mipmap/panda" />
-
-    <ImageView
-        android:id="@+id/top"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100dp"
-        android:background="@mipmap/panda" />
+        <ImageView
+            android:id="@+id/top"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            android:background="@mipmap/panda" />
 
 
-    <com.zhl.userguideview.UserGuideView
-        android:id="@+id/guideView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:HighlightViewStyle="circle"
-        app:MaskBlurStyle="solid"
-        app:maskColor="#b7000000"
-        app:tipView="@mipmap/tip_view" />
-
+        <com.zhl.userguideview.UserGuideView
+            android:id="@+id/guideView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:HighlightViewStyle="oval"
+            app:MaskBlurStyle="solid"
+            app:maskColor="#ff0000"
+            app:tipView="@mipmap/tip_view" />
+    </FrameLayout>
 
 </FrameLayout>

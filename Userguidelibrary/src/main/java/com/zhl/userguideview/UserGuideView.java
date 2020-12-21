@@ -254,7 +254,7 @@ public class UserGuideView extends View {
         if (targetView == null) {
             return;
         }
-        canvas.drawBitmap(fgBitmap, 0, 0, null);
+        canvas.drawBitmap(fgBitmap, 0, 0, null);// 整个背景
 //        int left = targetView.getLeft();
 //        int top = targetView.getTop();
         int left = 0;
@@ -265,7 +265,7 @@ public class UserGuideView extends View {
         int vHeight = targetView.getHeight();
 
         Rect tagetRect = new Rect();
-        targetView.getGlobalVisibleRect(tagetRect);
+        targetView.getGlobalVisibleRect(tagetRect); // 目标
         tagetRect.offset(0, -statusBarHeight);
         left = tagetRect.left - offestMargin;
         top = tagetRect.top - offestMargin;
@@ -284,25 +284,25 @@ public class UserGuideView extends View {
         // 绘制高亮框
         switch (highLightStyle) {
             case VIEWSTYLE_RECT:
-                RectF rect = new RectF(left, top, right, bottom);
+                RectF rect = new RectF(left, top, right, bottom); // 方形
                 mCanvas.drawRoundRect(rect, 20, 20, mPaint);
                 break;
-            case VIEWSTYLE_CIRCLE:
+            case VIEWSTYLE_CIRCLE: // 圆框
                 radius = (int) Math.sqrt(vWidth * vWidth + vHeight * vHeight) / 2 + offestMargin;
                 if (radius < 50) {
                     radius = 100;
                 }
                 mCanvas.drawCircle(left + offestMargin + vWidth / 2, top + offestMargin + vHeight / 2, radius, mPaint);
                 break;
-            case VIEWSTYLE_OVAL:
+            case VIEWSTYLE_OVAL: //椭圆
                 RectF rectf = new RectF(left, top, right, bottom);
                 mCanvas.drawOval(rectf, mPaint);
                 break;
 
         }
 
-        tipViewMoveX = getTipViewMoveX();
-        tipViewMoveY = getTipViewMoveY();
+        tipViewMoveX = getTipViewMoveX(); //提示需要移动的X
+        tipViewMoveY = getTipViewMoveY(); //提示需要移动的Y
 
         // 绘制箭头和提示view
         if (bottom < screenH / 2 || (screenH / 2 - top > bottom - screenH / 2)) {// top
@@ -414,12 +414,12 @@ public class UserGuideView extends View {
     public void setHighLightView(View targetView) {
         if (this.targetView != null && targetView != null && this.targetView != targetView) {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR)); // 挖空了这个View
             mCanvas.drawPaint(paint);
             mCanvas.drawColor(maskColor);
         }
-        this.targetView = targetView;
-        invalidate();
+        this.targetView = targetView;// 给这个targetView赋值
+        invalidate();//刷新界面
         setVisibility(VISIBLE);
     }
 

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId "com.zhl.userguideview"
+        applicationId "com.zhl.userguideview.userguideview"
         minSdkVersion 15
         targetSdkVersion 26
         versionCode 1

@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zhl.userguideview.userguideview.R;
 
@@ -22,7 +23,7 @@ public class UserGuideTestActivity extends Activity {
     private String[] datas = new String[]{"收藏", "字体大小", "软件设置", "换肤"};
     GridView mGridView;
     private UserGuideView guideView;
-    private ImageView bottom, topLeft, top,topRight ,bottomLeft, bottomRight;
+    private ImageView bottom, topLeft, top, topRight, bottomLeft, bottomRight;
     View tipTextView;
 
     @Override
@@ -81,14 +82,22 @@ public class UserGuideTestActivity extends Activity {
         guideView.setArrowDownLeft(R.mipmap.guide_arrow_left);
         guideView.setArrowUpLeftMoveX(-30);
         guideView.setArrowDownRightMoveX(0);
-        guideView.setTipViewMoveX(bottomLeft,-60);
+        guideView.setTipViewMoveX(bottomLeft, -60);
 //        guideView.setTipViewMoveX(bottomRight,140);
-        guideView.setTipViewMoveX(topRight,-50);
+        guideView.setTipViewMoveX(topRight, -50);
         guideView.setArrowDownLeftMoveX(-20);
 //        guideView.setArrowDownCenterMoveX(100);
 //        guideView.setTipViewMoveX(icon,-100);
 //        guideView.setTipViewMoveY(icon,100);
         guideView.setHighLightView(targets);
+
+
+        findViewById(R.id.touch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(UserGuideTestActivity.this, "点击了", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private class MyAaapter extends BaseAdapter {
@@ -124,6 +133,13 @@ public class UserGuideTestActivity extends Activity {
 ////                guideView.setTipView(BitmapFactory.decodeResource(getResources(),R.mipmap.sidebar_photo));
 //                guideView.setHighLightView(convertView);
 //            }
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 点击了
+
+                }
+            });
             return convertView;
         }
 

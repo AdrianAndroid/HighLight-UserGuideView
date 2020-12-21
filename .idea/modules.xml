@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/UserGuideView.iml" filepath="$PROJECT_DIR$/UserGuideView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Userguidelibrary/Userguidelibrary.iml" filepath="$PROJECT_DIR$/Userguidelibrary/Userguidelibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HighLight-UserGuideView.iml" filepath="$PROJECT_DIR$/.idea/modules/HighLight-UserGuideView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Userguidelibrary/HighLight-UserGuideView.Userguidelibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/Userguidelibrary/HighLight-UserGuideView.Userguidelibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HighLight-UserGuideView.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HighLight-UserGuideView.app.iml" />
     </modules>
   </component>
 </project>
