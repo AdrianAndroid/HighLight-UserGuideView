@@ -32,7 +32,7 @@ public class AnimGuideView extends View {
     }
 
     interface OnGuideListener {
-        void onTouched(TYPE type);
+        void onTouched(AnimGuideView view, TYPE type);
     }
 
 
@@ -120,11 +120,11 @@ public class AnimGuideView extends View {
             int touchX = (int) event.getX();
             int touchY = (int) event.getY();
             if (this.targetRect.contains(touchX, touchY)) {
-                onGuideListener.onTouched(TYPE.TARGET);
+                onGuideListener.onTouched(this, TYPE.TARGET);
             } else if (this.hintRect.contains(touchX, touchY)) {
-                onGuideListener.onTouched(TYPE.HINT);
+                onGuideListener.onTouched(this, TYPE.HINT);
             } else {
-                onGuideListener.onTouched(TYPE.OUTSIDE);
+                onGuideListener.onTouched(this, TYPE.OUTSIDE);
             }
         }
     }
