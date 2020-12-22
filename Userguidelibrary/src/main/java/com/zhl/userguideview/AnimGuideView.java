@@ -13,13 +13,29 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 
 public class AnimGuideView extends View {
+
+    enum TYPE {
+        TARGET,
+        HINT,
+        OUTSIDE
+    }
+
+    interface OnGuideListener {
+        void onTouched(TYPE type);
+    }
+
+
     public static final int VIEWSTYLE_RECT = 0;
     public static final int VIEWSTYLE_CIRCLE = 1;
     public static final int VIEWSTYLE_OVAL = 2;
@@ -31,22 +47,28 @@ public class AnimGuideView extends View {
     private int maskblurstyle = MASKBLURSTYLE_SOLID;
     private int highLightStyle = VIEWSTYLE_RECT; //高亮的模式
 
+    private Rect targetRect = new Rect(); // 临时变量
+    private Rect hintRect = new Rect(); // 提示的范围
+
+    private RectF rectF = new RectF(); // 临时变量
+
     private Canvas mCanvas;// 给蒙版层的画布
     private Paint mPaint;//绘制蒙版层画笔
     private Bitmap fgBitmap; //前景
-    private Bitmap tipBitmap; // 提示的bitmap
     private int maskColor = 0x99000000;// 蒙版层颜色
 
     private Bitmap bmHands;// 手指指向
-    private Bitmap bmIknow;
+    private Bitmap bmHints;
 
     private float corner = 20;
     private int statusBarHeight; // 状态栏的高度
 
-    private float handsOffset = 0;
+    private float handsOffset = 40;
 
     //private Bitmap jtUpLeft, jtUpRight, jtUpCenter, jtDownRight, jtDownLeft, jtDownCenter;// 指示箭头
     private View targetView;
+
+    private OnGuideListener onGuideListener;
 
     public AnimGuideView(Context context) {
         super(context);
@@ -76,15 +98,63 @@ public class AnimGuideView extends View {
 //            }
 
 //            array.recycle();
-            bmHands = getBitmap(R.drawable.hands, 36, 36);// BitmapFactory.decodeResource(getResources(), R.drawable.shouzhi);
-            bmIknow = BitmapFactory.decodeResource(getResources(), R.mipmap.iknown);
+
         }
+
+//        if (bmHands == null) {
+//            bmHands = BitmapFactory.decodeResource(getResources(), R.layout.userguide_hands);
+//        }
+//        if (bmHints == null) {
+//            bmHints = BitmapFactory.decodeResource(getResources(), R.layout.userguide_tips);
+//        }
 
 
         cal(context);
         init(context);
     }
 
+    private void notifyListener(MotionEvent event) {
+        if (onGuideListener != null) {
+            // 判断区域范围
+
+            int touchX = (int) event.getX();
+            int touchY = (int) event.getY();
+            if (this.targetRect.contains(touchX, touchY)) {
+                onGuideListener.onTouched(TYPE.TARGET);
+            } else if (this.hintRect.contains(touchX, touchY)) {
+                onGuideListener.onTouched(TYPE.HINT);
+            } else {
+                onGuideListener.onTouched(TYPE.OUTSIDE);
+            }
+        }
+    }
+
+    /*
+     int touchX = (int) event.getX();
+                    int touchY = (int) event.getY();
+                    if (tipViewHitRect != null && tipViewHitRect.contains(touchX, touchY)) {
+                        if (targetViews == null || targetViews.size() == 0) {
+                            this.setVisibility(View.GONE);
+                            if (this.onDismissListener != null) {
+                                onDismissListener.onDismiss(UserGuideView.this);
+                            }
+                        } else {
+                            tipBitmap = getBitmapFromResId(tipViews.get(0));
+                            tipViews.remove(0);
+                            setHighLightView(targetViews.get(0));
+                            targetViews.remove(0);
+                        }
+                        return true;
+                    }
+     */
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            notifyListener(event);
+        }
+        return true;// super.onTouchEvent(event);
+    }
 
     public Bitmap getBitmap(@DrawableRes final int resId,
                             final int maxWidth,
@@ -143,7 +213,7 @@ public class AnimGuideView extends View {
                 blurStyle = BlurMaskFilter.Blur.NORMAL;
                 break;
         }
-        mPaint.setMaskFilter(new BlurMaskFilter(15, blurStyle));
+        mPaint.setMaskFilter(new BlurMaskFilter(1, blurStyle));
 
         fgBitmap = MeasureUtil.createBitmapSafely(screenW, screenH, Bitmap.Config.ARGB_8888, 2);
         if (fgBitmap == null) {
@@ -162,14 +232,14 @@ public class AnimGuideView extends View {
         // 画背景
         canvas.drawBitmap(fgBitmap, 0, 0, null);
 
-        Rect rect = new Rect();
-        targetView.getGlobalVisibleRect(rect);
-        rect.offset(0, -statusBarHeight);
+
+        targetView.getGlobalVisibleRect(targetRect);
+        targetRect.offset(0, -statusBarHeight);
 
         //  绘制高亮
         switch (highLightStyle) {
             case VIEWSTYLE_RECT: // 正方形
-                RectF rectF = new RectF(rect);
+                rectF.set(targetRect);
                 mCanvas.drawRoundRect(rectF, corner, corner, mPaint);
                 break;
             case VIEWSTYLE_CIRCLE: // 圆形
@@ -179,38 +249,25 @@ public class AnimGuideView extends View {
         }
 
 
-        // rect.offset(0, statusBarHeight);
-        drawHands(canvas, rect);
-        drawHints(canvas, rect);
-    }
+        if (bmHands != null) {
+            canvas.drawBitmap(bmHands,
+                    targetRect.left + (Math.abs(targetRect.left - targetRect.right) >> 1) - (bmHands.getWidth() >> 1),
+                    targetRect.top - bmHands.getHeight() - handsOffset,
+                    null);
+        }
 
-    private void drawHints(Canvas canvas, Rect rect) {
+
         // "我知道了" 提示
-        canvas.drawBitmap(bmIknow, getIKnowLeft(rect), getIKnowTop(rect), null);
-    }
-
-
-    private float getIKnowLeft(Rect rect) {
-        return rect.left - bmIknow.getWidth() - 20;
-    }
-
-    private float getIKnowTop(Rect rect) {
-        return rect.top - (Math.abs(rect.top - rect.bottom) >> 1 - bmIknow.getHeight() >> 1);
-    }
-
-
-    private void drawHands(Canvas canvas, Rect rect) {
-        // 手指头
-        canvas.drawBitmap(bmHands, getHandsLeft(rect), getHandsTop(rect), null);
-    }
-
-
-    private float getHandsLeft(Rect targetRect) {
-        return targetRect.left + (Math.abs(targetRect.left - targetRect.right) >> 1) - (bmHands.getWidth() >> 1);
-    }
-
-    private float getHandsTop(Rect targetRect) {
-        return targetRect.top - bmHands.getHeight() - handsOffset;
+        if (bmHints != null) {
+            if (this.hintRect.isEmpty()) { // 省的刷新
+                int left = targetRect.left - bmHints.getWidth() - 80;
+                int top = targetRect.top + (Math.abs(targetRect.top - targetRect.bottom) >> 1 - bmHints.getHeight() >> 1);
+                int right = left + bmHints.getWidth();
+                int bottom = top + bmHints.getHeight();
+                this.hintRect.set(left, top, right, bottom);
+            }
+            canvas.drawBitmap(bmHints, this.hintRect.left, this.hintRect.top, null);
+        }
     }
 
 
@@ -224,13 +281,34 @@ public class AnimGuideView extends View {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR)); // 清除之前的模式
             mCanvas.drawPaint(paint);
-            mCanvas.drawColor(maskColor);
         }
+
+        mCanvas.drawColor(maskColor);
         this.targetView = targetView;
+        inflate2(R.layout.userguide_tips);
+
+        this.bmHints = BitmapFactory.decodeResource(getResources(), R.mipmap.userguide_iknown);
+        this.bmHands = MeasureUtil.drawViewToBitmap(inflate2(R.layout.userguide_hands), 180, 180);
+
+//        this.tipBitmap = MeasureUtil.getViewBitmap(inflate2(R.layout.userguide_tips));//MeasureUtil.drawViewToBitmap(inflate2(R.layout.userguide_tips),);
+//        this.bmHands = MeasureUtil.getViewBitmap(inflate2(R.layout.userguide_hands));//MeasureUtil.drawViewToBitmap(inflate2(R.layout.userguide_hands), 60, 60);
         invalidate();
         setVisibility(VISIBLE);
     }
 
+    private View inflate2(int layoutId) {
+        ViewParent parent = getParent();
+        if (parent instanceof ViewGroup) {
+            return LayoutInflater.from(getContext()).inflate(layoutId, (ViewGroup) parent, false);
+        } else {
+            return LayoutInflater.from(getContext()).inflate(layoutId, null);
+        }
+    }
+
+    // 设置提示
+    public void setTipBitmap(Bitmap tipBitmap) {
+        this.bmHints = tipBitmap;
+    }
 
     public void setHandsOffset(float handsOffset) {
         this.handsOffset = handsOffset;
@@ -242,11 +320,16 @@ public class AnimGuideView extends View {
     }
 
     public void startHandsAnimate() {
-        ObjectAnimator handsOffset = ObjectAnimator.ofFloat(this, "handsOffset", 0F, 1F, 2F, 3F, 10F, 15F, 17F, 18F, 19F, 20F);
+        ObjectAnimator handsOffset = ObjectAnimator.ofFloat(this, "handsOffset"
+                , 0F, 1F, 2F, 3F, 4F, 5F, 6F, 7F, 8F, 9F, 10F, 11F, 12F, 13F, 14F, 15F, 16F, 17F, 18F, 19F, 20F);
         handsOffset.setInterpolator(new LinearInterpolator());
-        handsOffset.setDuration(500);
+        handsOffset.setDuration(400);
         handsOffset.setRepeatCount(ObjectAnimator.INFINITE);
         handsOffset.setRepeatMode(ObjectAnimator.REVERSE);
         handsOffset.start();
+    }
+
+    public void setOnGuideListener(OnGuideListener onGuideListener) {
+        this.onGuideListener = onGuideListener;
     }
 }

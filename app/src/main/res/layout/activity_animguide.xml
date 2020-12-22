@@ -122,6 +122,7 @@
                 android:textSize="30dp" />
 
             <ImageView
+                android:id="@+id/iv4"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:src="@drawable/topic_start" />

@@ -56,10 +56,23 @@ public class AnimGuideActivity extends Activity {
         animGuideView.setVisibility(View.VISIBLE);
 
 
-        View second = findViewById(R.id.second);
+        View second = findViewById(R.id.iv4);
         animGuideView.setHighLightView(second);
         animGuideView.setStatusBarHeight(MeasureUtil.getStatuBarHeight(this));
         animGuideView.startHandsAnimate();
+        animGuideView.setOnGuideListener(new AnimGuideView.OnGuideListener() {
+
+            @Override
+            public void onTouched(AnimGuideView.TYPE type) {
+                if (type == AnimGuideView.TYPE.TARGET) {
+                    Toast.makeText(AnimGuideActivity.this, "TARGET", Toast.LENGTH_SHORT).show();
+                } else if (type == AnimGuideView.TYPE.HINT) {
+                    Toast.makeText(AnimGuideActivity.this, "HINT", Toast.LENGTH_SHORT).show();
+                } else if (type == AnimGuideView.TYPE.OUTSIDE) {
+                    Toast.makeText(AnimGuideActivity.this, "OUTSIDE", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
         // 1. 先把背景涂黑
